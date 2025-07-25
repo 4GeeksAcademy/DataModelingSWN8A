@@ -20,6 +20,9 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
 
+    favorites: Mapped[list["Favorite"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan")
+
 
 class Planet(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -81,12 +84,15 @@ class Favorite(db.Model):
             "people": self.people.name if self.people else None
         }
 
+
 class LearnMore(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
-    url: Mapped[str] = mapped_column(String(500), nullable=False)
-    planet_id: Mapped[int | None] = mapped_column(ForeignKey("planet.id"), nullable=True)
-    people_id: Mapped[int | None] = mapped_column(ForeignKey("people.id"), nullable=True)
+    description: Mapped[str] = mapped_column(String(500), nullable=False)
+    planet_id: Mapped[int | None] = mapped_column(
+        ForeignKey("planet.id"), nullable=True)
+    people_id: Mapped[int | None] = mapped_column(
+        ForeignKey("people.id"), nullable=True)
 
     planet: Mapped["Planet"] = relationship()
     people: Mapped["People"] = relationship()
